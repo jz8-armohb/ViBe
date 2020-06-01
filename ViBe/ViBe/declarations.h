@@ -1,4 +1,11 @@
 #pragma once
-#include <iostream>
 #define W 352
 #define H 288
+#define N 20	// Number of samples per pixel
+#define R 20	// Radius of the sphere
+#define SHARP_MIN 2	// Number of close samples for being part of the background
+#define PHI	16	// Amount of ramdom subsampling
+#define GetRandNum(x) (rand() % x)	// Generate a random number in a certain range
+
+
+int RandNumTo8NeighIdx(int randNum, int i, int j);
