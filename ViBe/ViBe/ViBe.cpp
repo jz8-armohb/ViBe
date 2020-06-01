@@ -2,6 +2,13 @@
 #include "declarations.h"
 using namespace std;
 
+/************************************
+* 8-Neighbour
+* 0 1 2
+* 3 8 4
+* 5 6 7
+*************************************/
+
 int RandNumTo8NeighIdx(int randNum, int i, int j) {
 	switch (randNum) {
 	case 0:	// Top-left
@@ -27,6 +34,9 @@ int RandNumTo8NeighIdx(int randNum, int i, int j) {
 		break;
 	case 7:	// Bottom-right
 		return ((i + 1) * W + j + 1);
+		break;
+	case 8:	// Current pixel
+		return (i * W + j);
 		break;
 	default:
 		break;
@@ -64,22 +74,22 @@ int EdgePos(int i, int j) {
 int GetEdgeValidRand(int randNum, int condition) {
 	switch (condition) {
 	case 0:	// Top-left corner
-		while ( (randNum != 4) && (randNum != 6) && (randNum != 7) ) {
+		while ( (randNum != 4) && (randNum != 6) && (randNum != 7) && (randNum != 8) ) {
 			randNum = GetRandNum(8);
 		}
 		break;
 	case 1:	// Top-right corner
-		while ( (randNum != 3) && (randNum != 5) && (randNum != 6) ) {
+		while ( (randNum != 3) && (randNum != 5) && (randNum != 6) && (randNum != 8) ) {
 			randNum = GetRandNum(8);
 		}
 		break;
 	case 2:	// Bottom-left corner
-		while ( (randNum != 1) && (randNum != 2) && (randNum != 4) ) {
+		while ( (randNum != 1) && (randNum != 2) && (randNum != 4) && (randNum != 8) ) {
 			randNum = GetRandNum(8);
 		}
 		break;
 	case 3:	// Bottom-right corner
-		while ( (randNum != 0) && (randNum != 1) && (randNum != 3) ) {
+		while ( (randNum != 0) && (randNum != 1) && (randNum != 3) && (randNum != 8) ) {
 			randNum = GetRandNum(8);
 		}
 		break;

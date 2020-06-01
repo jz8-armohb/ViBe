@@ -58,14 +58,14 @@ int main(int argc, char* argv[]) {
 			if ( (i == 0) || (i == (H - 1)) || (j == 0) || (j == (W - 1)) ) {
 				for (int n = 0; n < N; n++) {
 					int condition = EdgePos(i, j);
-					int randNum = GetRandNum(8);
+					int randNum = GetRandNum(9);
 					randNum = GetEdgeValidRand(randNum, condition);
 					int index = RandNumTo8NeighIdx(randNum, i, j);
 					samples[i * W * N + j * N + n] = srcFrameYBuf[index];
 				}
 			} else {
 				for (int n = 0; n < N; n++) {
-					int randNum = GetRandNum(8);	// Get a random number with the range of 0 to 7
+					int randNum = GetRandNum(9);	// Get a random number with the range of 0 to 7
 					int index = RandNumTo8NeighIdx(randNum, i, j);	// Compute the index of buffer of the 8-neighbour
 					samples[i * W * N + j * N + n] = srcFrameYBuf[index];	// Store each sample
 				}
