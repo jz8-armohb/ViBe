@@ -5,6 +5,8 @@
 #define R 20	// Radius of the sphere
 #define SHARP_MIN 2	// Number of close samples for being part of the background
 #define PHI	16	// Amount of ramdom subsampling
+#define BACK 0
+#define FORE 255
 #define GetRandNum(x) (rand() % x)	// Generate a random number in a certain range
 
 

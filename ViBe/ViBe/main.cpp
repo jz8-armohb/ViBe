@@ -35,23 +35,21 @@ int main(int argc, char* argv[]) {
 	fseek(srcFilePtr, 0L, SEEK_END);
 	fileSize = ftell(srcFilePtr);
 	rewind(srcFilePtr);
-	cout << "Size of the orignal file: " << (double)fileSize / 1024 << " kB.\n";
+	cout << "Size of the source file: " << (double)fileSize / 1024 << " kB.\n";
 	frameCnt = fileSize / frameSize;
 	cout << "Frame count: " << frameCnt << ".\n";
 
 	/* Space allocation & initialisation */
 	srcFrameYBuf = new unsigned char[yFrameSize];
 	dstFrameUVBuf = new unsigned char[uvFrameSize];
-	memset(dstFrameUVBuf, 128, W * H / 4);
+	memset(dstFrameUVBuf, 128, uvFrameSize);
 
 
 	/**************** ViBe ****************/
-	/* Variables and buffers for ViBe */
+	/* Buffers for ViBe */
 	unsigned char image[W][H];	// Current frame
-	unsigned char samples[W][H][N];	// Background model (samples of each pixel)
-	unsigned char segMap[W][H];	// Background / foreground segmentation map
-	unsigned char background = 0;	// Background identifier
-	unsigned char foreground = 255;	// Foreground identifier
+	unsigned char* samples = new unsigned char[W * H * N];	// Background model (samples of each pixel)
+	unsigned char* segMap = new unsigned char[W * H];	// Background / foreground segmentation map
 
 	/* Initialisation of backgroung model */
 	fread(srcFrameYBuf, sizeof(unsigned char), yFrameSize, srcFilePtr);	// Read the first frame of the video (Y component) into the buffer
@@ -63,13 +61,13 @@ int main(int argc, char* argv[]) {
 					int randNum = GetRandNum(8);
 					randNum = GetEdgeValidRand(randNum, condition);
 					int index = RandNumTo8NeighIdx(randNum, i, j);
-					samples[i][j][n] = srcFrameYBuf[index];
+					samples[i * W * N + j * N + n] = srcFrameYBuf[index];
 				}
 			} else {
 				for (int n = 0; n < N; n++) {
 					int randNum = GetRandNum(8);	// Get a random number with the range of 0 to 7
 					int index = RandNumTo8NeighIdx(randNum, i, j);	// Compute the index of buffer of the 8-neighbour
-					samples[i][j][n] = srcFrameYBuf[index];	// Store each sample
+					samples[i * W * N + j * N + n] = srcFrameYBuf[index];	// Store each sample
 				}
 			}
 		}
@@ -87,7 +85,7 @@ int main(int argc, char* argv[]) {
 				/* Compare each pixel to background model */
 				int count = 0, index = 0, dist = 0;
 				while ((count < SHARP_MIN) && (index < N)) {
-					dist = abs(image[i][j] - samples[i][j][index]);	// Euclidean distance
+					dist = abs((int)srcFrameYBuf[i * W + j] - (int)samples[i * W * N + j * N + index]);	// Euclidean distance
 					if (dist < R) {
 						count++;
 					}
@@ -96,30 +94,37 @@ int main(int argc, char* argv[]) {
 
 				/* Classify pixel and update model */
 				if (count >= SHARP_MIN) {
-					segMap[i][j] = background;	// Mark the current pixel as background
+					segMap[i * W + j] = BACK;	// Mark the current pixel as background
 
 					/* Update current pixel model */
 					int randNum = GetRandNum(PHI);
 					if (randNum == 0) {
 						randNum = GetRandNum(N);	// Random subsampling
-						samples[i][j][randNum] = image[i][j];	// Replace randomly chosen sample
+						samples[i * W * N + j * N + randNum] = srcFrameYBuf[i * W + j];	// Replace randomly chosen sample
 					}
 
 					/* Update neighbouring pixel model */
 					randNum = GetRandNum(PHI);
 					if (randNum == 0) {
 						/* Random subsampling */
-						randNum = GetRandNum(8);
-						int index = RandNumTo8NeighIdx(randNum, i, j);
-						int iNG = index / (int)W;
-						int jNG = index % (int)W;
-
+						int randX = 0, randY = 0;
+						while ((randX != 0) || (randY != 0)) {
+							randX = GetRandNum(3) - 1;	// Get a random number from -1 and 1
+							randY = GetRandNum(3) - 1;
+						}
 						randNum = GetRandNum(N);
-						samples[iNG][jNG][randNum] = image[i][j];
+						samples[(i + randY) * W * N + (j + randX) * N + randNum] = srcFrameYBuf[i * W + j];
+						//randNum = GetRandNum(8);
+						//int index = RandNumTo8NeighIdx(randNum, i, j);
+						//int iNG = index / (int)W;
+						//int jNG = index % (int)W;
+
+						//randNum = GetRandNum(N);
+						//samples[iNG * W * N + jNG * N + randNum] = srcFrameYBuf[i * W + j];
 					}
 
 				} else {	/* count < SHARP_MIN */
-					segMap[i][j] = foreground;	// Mark the current pixel as foreground
+					segMap[i * W + j] = FORE;	// Mark the current pixel as foreground
 				}
 			}
 		}
@@ -135,4 +140,6 @@ int main(int argc, char* argv[]) {
 	fclose(dstFilePtr);
 	delete[]srcFrameYBuf;
 	delete[]dstFrameUVBuf;
+	delete[]samples;
+	delete[]segMap;
 }
