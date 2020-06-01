@@ -9,3 +9,5 @@
 
 
 int RandNumTo8NeighIdx(int randNum, int i, int j);
+int EdgePos(int i, int j);
+int GetEdgeValidRand(int randNum, int condition);
