@@ -11,4 +11,10 @@ Pseudo-code attached in Appendix A referred.
 
 - Can correctly perform ViBe algorithm with YUV file
 - Needs function encapsulation
-- Not efficiently performed (approx. 9 seconds)
+- Not efficiently performed (approx. takes 9 seconds)
+
+## v1.1
+
+2020.6.2
+
+- ViBe functions encapsulated

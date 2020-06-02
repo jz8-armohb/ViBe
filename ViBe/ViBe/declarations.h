@@ -13,3 +13,5 @@
 int RandNumTo8NeighIdx(int randNum, int i, int j);
 int EdgePos(int i, int j);
 int GetEdgeValidRand(int randNum, int condition);
+void ViBe_Init(unsigned char* srcFrameYBuf, unsigned char* samples);
+void Vibe_FrameProcess(unsigned char* srcFrameYBuf, unsigned char* samples, unsigned char* segMap);
