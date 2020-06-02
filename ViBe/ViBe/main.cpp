@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
 		fread(srcFrameYBuf, sizeof(unsigned char), W * H, srcFilePtr);
 		fseek(srcFilePtr, uvFrameSize, SEEK_CUR);	// Skip chrominance components
 
-		Vibe_FrameProcess(srcFrameYBuf, samples, segMap);
+		ViBe_FrameProcess(srcFrameYBuf, samples, segMap);
 
 		/* Write segmentation map into file */
 		fwrite(segMap, sizeof(unsigned char), yFrameSize, dstFilePtr);

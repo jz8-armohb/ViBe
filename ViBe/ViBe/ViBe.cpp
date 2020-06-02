@@ -142,7 +142,7 @@ void ViBe_Init(unsigned char* srcFrameYBuf, unsigned char* samples) {
 	}
 }
 
-void Vibe_FrameProcess(unsigned char* srcFrameYBuf, unsigned char* samples, unsigned char* segMap) {
+void ViBe_FrameProcess(unsigned char* srcFrameYBuf, unsigned char* samples, unsigned char* segMap) {
 	/* For each pixel */
 	for (int i = 0; i < H; i++) {
 		for (int j = 0; j < W; j++) {
